@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Italian Word of the Day</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      padding-top: 56px; /* Offset for the fixed Navbar */
+    }
+    .word-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .intro-section {
+      text-align: center;
+      padding: 40px 0;
+      background-color: #dc3545; /* Italy Red */
+      color: #fff;
+    }
+    .card {
+      margin-top: 20px;
+      border: 2px solid #dc3545; /* Italy Red */
+      border-radius: 10px;
+    }
+    .navbar {
+      background-color: #dc3545; /* Italy Red */
+    }
+    .navbar-dark .navbar-brand {
+      color: #fff;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Bootstrap Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <a class="navbar-brand" href="#">Italian Word Learner</a>
+</nav>
+
+<!-- Intro Section -->
+<div class="intro-section">
+  <div class="container">
+    <h1 class="display-4">Discover the Beauty of Italian Words</h1>
+    <p class="lead">Expand your vocabulary with a new Italian word every day.</p>
+  </div>
+</div>
+
+<!-- Word Container -->
+<div class="word-container container">
+  <h2 class="text-center mb-4">Italian Word of the Day</h2>
+
+  <div id="currentWord" class="card">
+    <div class="card-body">
+      <!-- Content will be dynamically added here -->
+    </div>
+  </div>
+
+  <button class="btn btn-primary mt-3" onclick="updateWord()">Next Word</button>
+
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+  // Collection of words
+const words = [
+  { word: 'Ciao', meaning: 'Hello/Hi', example: 'Ciao! Come stai?' },
+  { word: 'Grazie', meaning: 'Thank you', example: 'Grazie mille!' },
+  { word: 'Prego', meaning: 'You\'re welcome', example: 'Prego, si accomodi.' },
+  { word: 'Buongiorno', meaning: 'Good morning', example: 'Buongiorno a tutti!' },
+  { word: 'Buonasera', meaning: 'Good evening', example: 'Buonasera, signore e signori.' },
+  { word: 'Amico', meaning: 'Friend', example: 'Lui è il mio amico.' },
+  { word: 'Famiglia', meaning: 'Family', example: 'La famiglia è tutto.' },
+  { word: 'Pizza', meaning: 'Pizza', example: 'Mi piace la pizza margherita.' },
+  { word: 'Gelato', meaning: 'Ice cream', example: 'Un gelato al cioccolato, per favore.' },
+  { word: 'Bella', meaning: 'Beautiful', example: 'Questa città è davvero bella.' },
+  // Add more words here
+  { word: 'Luna', meaning: 'Moon', example: 'La luna è piena stasera.' },
+  { word: 'Montagna', meaning: 'Mountain', example: 'Abbiamo scalato quella montagna.' },
+  { word: 'Ombrello', meaning: 'Umbrella', example: 'Porta sempre un ombrello con te.' },
+  { word: 'Oceano', meaning: 'Ocean', example: 'L\'oceano è vasto e profondo.' },
+  { word: 'Libro', meaning: 'Book', example: 'Mi piace leggere un buon libro.' },
+  { word: 'Teatro', meaning: 'Theater', example: 'Andiamo a vedere uno spettacolo al teatro.' },
+  { word: 'Vino', meaning: 'Wine', example: 'Il vino rosso è il mio preferito.' },
+  { word: 'Stazione', meaning: 'Station', example: 'Prendiamo il treno alla stazione centrale.' },
+  { word: 'Mare', meaning: 'Sea', example: 'Il mare è calmo oggi.' },
+  { word: 'Arancione', meaning: 'Orange', example: 'La arancia è un frutto arancione.' },
+  // Add more words as needed
+  { word: 'Formaggio', meaning: 'Cheese', example: 'Mi piace il formaggio stagionato.' },
+  { word: 'Giardino', meaning: 'Garden', example: 'Il giardino è pieno di fiori colorati.' },
+  { word: 'Avventura', meaning: 'Adventure', example: 'Ogni viaggio è un\'avventura.' },
+  { word: 'Fotografia', meaning: 'Photography', example: 'Mi piace scattare fotografie.' },
+  { word: 'Silenzio', meaning: 'Silence', example: 'A volte il silenzio è la risposta migliore.' },
+  { word: 'Magia', meaning: 'Magic', example: 'C\'è una certa magia nell\'aria.' },
+  { word: 'Università', meaning: 'University', example: 'Studia all\'università di Milano.' },
+  { word: 'Tradizione', meaning: 'Tradition', example: 'Seguiamo le antiche tradizioni.' },
+  { word: 'Sogno', meaning: 'Dream', example: 'Insegue il tuo sogno più grande.' },
+  { word: 'Rispetto', meaning: 'Respect', example: 'Il rispetto è fondamentale nelle relazioni.' },
+  { word: 'Risate', meaning: 'Laughter', example: 'Le risate sono il miglior medicinale.' },
+  { word: 'Melodia', meaning: 'Melody', example: 'La melodia della musica è incantevole.' },
+  { word: 'Azzurro', meaning: 'Blue', example: 'Il cielo azzurro sopra di noi.' },
+  { word: 'Felicità', meaning: 'Happiness', example: 'La felicità è nelle piccole cose.' },
+  { word: 'Avventura', meaning: 'Adventure', example: 'Ogni giorno è un\'avventura.' },
+  { word: 'Ricordo', meaning: 'Memory', example: 'Questo è un dolce ricordo.' },
+  { word: 'Pioggia', meaning: 'Rain', example: 'Mi piace il suono della pioggia.' },
+  { word: 'Sorriso', meaning: 'Smile', example: 'Un sorriso può illuminare la giornata.' },
+  { word: 'Tranquillità', meaning: 'Tranquility', example: 'La tranquillità del luogo è rilassante.' },
+  { word: 'Giustizia', meaning: 'Justice', example: 'La giustizia è la base di una società equa.' },
+  { word: 'Magico', meaning: 'Magical', example: 'Un luogo magico e misterioso.' },
+  { word: 'Lavoro', meaning: 'Work', example: 'Fai un lavoro che ami.' },
+  { word: 'Equilibrio', meaning: 'Balance', example: 'Trova l\'equilibrio nella vita.' },
+  { word: 'Eleganza', meaning: 'Elegance', example: 'L\'eleganza è un modo di vivere.' },
+  { word: 'Riflessione', meaning: 'Reflection', example: 'La riflessione porta alla crescita.' },
+  { word: 'Armonia', meaning: 'Harmony', example: 'Cerca l\'armonia con la natura.' },
+  { word: 'Fragranza', meaning: 'Fragrance', example: 'La fragranza dei fiori primaverili.' },
+  { word: 'Passione', meaning: 'Passion', example: 'Segui la tua passione con determinazione.' },
+  { word: 'Spettacolare', meaning: 'Spectacular', example: 'La vista è spettacolare da qui.' },
+  { word: 'Vittoria', meaning: 'Victory', example: 'La vittoria è dolce.' },
+  { word: 'Innovazione', meaning: 'Innovation', example: 'L\'innovazione guida il progresso.' },
+  { word: 'Gioia', meaning: 'Joy', example: 'La gioia è contagiosa.' },
+  { word: 'Rispetto', meaning: 'Respect', example: 'Mostra rispetto a chi ti circonda.' },
+  { word: 'Creatività', meaning: 'Creativity', example: 'La creatività apre nuove possibilità.' },
+  { word: 'Dolcezza', meaning: 'Sweetness', example: 'La dolcezza di un gesto gentile.' },
+  { word: 'Fascino', meaning: 'Charm', example: 'Il suo sorriso ha un fascino unico.' },
+  { word: 'Serenità', meaning: 'Serenity', example: 'Trova la serenità nella quiete.' },
+];
+
+
+  let currentWordIndex = 0;
+
+  // Function to update the displayed word
+  function updateWord() {
+    const currentWordContainer = document.getElementById('currentWord');
+    currentWordContainer.innerHTML = generateWordCard(words[currentWordIndex]);
+    currentWordIndex = (currentWordIndex + 1) % words.length;
+  }
+
+  // Function to generate HTML for a word card
+  function generateWordCard(wordObj) {
+    return `
+      <h5 class="card-title">${wordObj.word}</h5>
+      <p class="card-text">Meaning: ${wordObj.meaning}</p>
+      <p class="card-text">Example: <em>${wordObj.example}</em></p>
+    `;
+  }
+
+  // Load the first word when the page is loaded
+  window.onload = updateWord;
+</script>
+
+</body>
+</html>

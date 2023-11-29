@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Italy Trip Planner</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-top: 60px; /* Adjusted to accommodate the fixed navbar */
+        }
+
+        h1 {
+            color: #dc3545;
+        }
+
+        #output {
+            margin-top: 20px;
+        }
+
+        .list-group-item {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<!-- Bootstrap Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">Italy Trip Planner</a>
+    </div>
+</nav>
+
+    <div class="container mt-5">
+        <h1 class="mt-4 mb-4">Italy Trip Planner</h1>
+        <form id="tripForm">
+            <div class="form-group">
+                <label for="days">Number of Days <b>(Maximum 8)</b>:</label>
+                <input type="number" class="form-control" id="days" required>
+            </div>
+
+            <div class="form-group">
+                <label for="budget">Budget ($):</label>
+                <input type="number" class="form-control" id="budget" required>
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="planTrip()">Plan Trip</button>
+        </form>
+
+        <div id="output" class="mt-4"></div>
+    </div>
+
+    <script>
+        let citiesInfo = {
+        'Rome': { description: 'The capital city of Italy with rich history and architecture.' , image:'https://tourismmedia.italia.it/is/image/mitur/20220127150143-colosseo-roma-lazio-shutterstock-756032350-1?wid=1600&hei=900&fit=constrain,1&fmt=webp'},
+        'Venice': { description: 'Known for its canals, historic architecture, and romantic atmosphere.', image: 'https://lp-cms-production.imgix.net/2021-06/GettyRF_543346423.jpg?sharp=10&vib=20&w=1200&w=600&h=400' },
+        'Florence': { description: 'A city famous for its art, history, and cultural heritage.', image: 'https://media.timeout.com/images/105879414/750/422/image.jpg' },
+        'Milan': { description: 'Italy’s fashion and design capital, also home to historical sites.', image: 'https://media.timeout.com/images/105186767/image.jpg' },
+        'Naples': { description: 'Offers a mix of historic and contemporary attractions, and great food.', image: 'https://static.independent.co.uk/2022/05/12/15/iStock-500513198.jpg?width=1200&height=1200&fit=crop'},
+        'Verona': { description: 'Famous for being the setting of Shakespeare’s "Romeo and Juliet".' , image: 'https://cdn4.tuscanynowandmore.com/storage/app/media/discover-italy/Bridge-Ponte-Pietra-in-Verona-on-Adige-river-.jpg'},
+        'Pisa': { description: 'Known for the iconic Leaning Tower and other historical landmarks.', image: 'https://static2-viaggi.corriereobjects.it/wp-content/uploads/2015/06/pisa-getty-1080x794.jpg?v=1572449393'},
+        'Siena': { description: 'A medieval city known for its beautiful cathedral and historic center.', image: 'https://tourismmedia.italia.it/is/image/mitur/20210311182031-enit-siena?wid=800&hei=500&fit=constrain,1&fmt=webp' },
+        'Bologna': { description: 'Renowned for its medieval and Renaissance architecture, as well as its cuisine.', image: 'https://hips.hearstapps.com/hmg-prod/images/bologna-03-1531212479.jpg?crop=1xw:1xh;center,top&resize=980:*' },
+        'Amalfi': { description: 'A stunning coastal town with beautiful landscapes and architecture.', image: 'https://a.cdn-hotels.com/gdcs/production185/d1347/1b400fdd-8d71-4604-b7fc-96ceebafc149.jpg?impolicy=fcrop&w=800&h=533&q=medium' }
+    };
+
+          var regions = {
+            'Central Italy': ['Rome', 'Florence', 'Siena'],
+            'Northern Italy': ['Venice', 'Milan', 'Verona'],
+            'Southern Italy': ['Naples', 'Amalfi'],
+            'Other': ['Pisa', 'Bologna']
+        };
+
+       var originalRegions = {
+        'Central Italy': ['Rome', 'Florence', 'Siena'],
+        'Northern Italy': ['Venice', 'Milan', 'Verona'],
+        'Southern Italy': ['Naples', 'Amalfi'],
+        'Other': ['Pisa', 'Bologna']
+    };
+
+        function planTrip() {
+            // Get user inputs
+            var days = parseInt(document.getElementById('days').value);
+            var budget = parseFloat(document.getElementById('budget').value);
+
+            // Check if inputs are valid
+            if (isNaN(days) || isNaN(budget) || days <= 0 || budget <= 0) {
+                alert('Please enter valid values for days and budget.');
+                return;
+            }
+
+            if (days > 8) {
+                alert('Maximum number of nights is 8');
+                return;
+            }
+
+            // Ensure enough days for each region
+            var regionsDays = {};
+            for (var region in regions) {
+                regionsDays[region] = 5;
+            }
+
+            // Simple trip planning algorithm with region allocation
+            var dailyBudget = budget / days;
+
+            var itinerary = [];
+            for (var i = 1; i <= days; i++) {
+                var region = getRandomRegion(regions, regionsDays);
+                var city = getRandomCityFromRegion(region);
+                var filteredArray = regions[region].filter(function(e) { return e !== city })
+                regions[region] = filteredArray;
+
+                var cityInfo = citiesInfo[city];
+
+                var dayBudget = dailyBudget;
+                if (i === 1) {
+                    dayBudget *= 1.5; // Allocate more budget for the first day
+                }
+
+                regionsDays[region]--;
+
+                if (cityInfo !== undefined) {
+                    itinerary.push(`<h2>${city}</h2><h3>Budget: $${dayBudget.toFixed(2)}</h3> <h4>Explore ${city} ${cityInfo.description}<br/><img height="300px" src="${cityInfo.image}"/> `);
+                }
+            }
+
+            // Display the itinerary
+            displayItinerary(itinerary);
+
+        }
+
+        function getRandomRegion(regions, regionsDays) {
+            var availableRegions = Object.keys(regions).filter(region => regionsDays[region] > 0);
+            return availableRegions[Math.floor(Math.random() * availableRegions.length)];
+        }
+
+        function getRandomCityFromRegion(region) {
+            var cities = regions[region];
+            return cities[Math.floor(Math.random() * cities.length)];
+        }
+
+        function displayItinerary(itinerary) {
+            var outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = '<h2>Your Itinerary:</h2>';
+
+            var list = document.createElement('ul');
+            list.classList.add('list-group');
+            for (var i = 0; i < itinerary.length; i++) {
+                var listItem = document.createElement('li');
+                listItem.classList.add('list-group-item');
+                listItem.innerHTML = itinerary[i];
+                list.appendChild(listItem);
+            }
+
+            outputDiv.appendChild(list);
+            regions = JSON.parse(JSON.stringify(originalRegions));
+            console.log(regions, originalRegions);
+        }
+    </script>
+</body>
+</html>
